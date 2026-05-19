@@ -6,7 +6,7 @@ A Streamlit dashboard for monitoring and optimizing AI API costs across teams an
 
 ```bash
 pip install -r requirements.txt
-/Users/arelreifman/Library/Python/3.9/bin/streamlit run app.py
+python3 -m streamlit run app.py
 ```
 
 Open [http://localhost:8501](http://localhost:8501) in your browser.
@@ -17,7 +17,7 @@ Set your Gemini API key to enable live AI-powered cost optimization recommendati
 
 ```bash
 export GEMINI_API_KEY="your_key_here"
-/Users/arelreifman/Library/Python/3.9/bin/streamlit run app.py
+python3 -m streamlit run app.py
 ```
 
 When `GEMINI_API_KEY` is set, the AI Advisor uses Gemini 2.5 Flash (with automatic fallback to Gemini 2.0 Flash) to analyze the filtered dataset and return three structured recommendation cards — each with severity, finding, business impact, estimated opportunity, and recommended action.
