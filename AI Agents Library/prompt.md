@@ -1,8 +1,8 @@
-# AI Usage Data Validator — Implementation Prompt
+# AI Usage Data Validator - Implementation Prompt
 
 You are a senior software engineer implementing a data validation and cleaning agent.
 
-Your task is to implement the **AI Usage Data Validator** — the first agent in an AI cost and usage intelligence pipeline.
+Your task is to implement the **AI Usage Data Validator** - the first agent in an AI cost and usage intelligence pipeline.
 
 Before writing any code, inspect the existing project structure and explain which files you plan to create or modify.
 Do not modify unrelated files.
@@ -156,7 +156,7 @@ Any value that cannot be parsed → `invalid_timestamp` critical error.
 ## Data Health Score
 
 Start at 100. Apply the following deductions.
-Scoring is **per-row / per-occurrence** — each offending row or occurrence is penalized individually.
+Scoring is **per-row / per-occurrence** - each offending row or occurrence is penalized individually.
 The score cannot drop below 0.
 Do not double-penalize the same issue: if a specific rule applies, use it; do not also apply the fallback.
 
@@ -216,7 +216,7 @@ Critical errors found in the original file but removed from the clean file do **
 | Status | Condition |
 |--------|-----------|
 | `"passed"` | No critical errors, no rows removed, no warnings of any kind |
-| `"passed_with_warnings"` | Warnings, high warnings, or rows removed — but `can_continue_to_next_agent = true` |
+| `"passed_with_warnings"` | Warnings, high warnings, or rows removed - but `can_continue_to_next_agent = true` |
 | `"failed"` | `can_continue_to_next_agent = false` for any reason |
 
 ---
@@ -275,7 +275,7 @@ Return exactly this structure. No additional top-level fields.
 **`next_step_reason` examples:**
 ```
 "Cleaned dataset passed all validation checks and is ready for the next agent."
-"Validation failed: required columns are missing — team, cost_usd."
+"Validation failed: required columns are missing - team, cost_usd."
 "Validation failed: no valid rows remained after cleaning."
 "Cleaned dataset passed with warnings. 3 rows removed, score 88. Ready for next agent."
 "Validation failed: data_health_score is 72, below required threshold of 85."
@@ -299,7 +299,7 @@ Return exactly this structure. No additional top-level fields.
 | `calculate_health_score(invalid_details, warnings, high_warnings)` | Apply deduction table; return integer 0–100 |
 | `write_clean_file(df, output_dir)` | Write timestamped CSV; return file path string |
 | `build_json_report(...)` | Assemble and return final JSON report dict |
-| `run(file_path)` | Entry point — orchestrates all of the above |
+| `run(file_path)` | Entry point - orchestrates all of the above |
 
 ---
 

@@ -9,7 +9,7 @@
 ## Role
 
 Validates, cleans, and scores AI usage and cost data files before they are passed to downstream agents in a pipeline.
-Operates strictly on the Single-Responsibility Principle — validation and cleaning only.
+Operates strictly on the Single-Responsibility Principle - validation and cleaning only.
 
 ---
 
@@ -27,7 +27,7 @@ Invoke it whenever a raw CSV or JSON file of AI usage records needs to be verifi
 | **File path** | Path to a raw CSV or JSON file |
 | **Supported formats** | CSV, JSON (array of objects) |
 | **Required fields** | `timestamp`, `team`, `provider`, `model_or_tool`, `usage_type`, `input_tokens`, `output_tokens`, `cost_usd`, `monthly_budget`, `user_id`, `request_id` |
-| **Additional fields** | Allowed — preserved in clean output if the row is valid |
+| **Additional fields** | Allowed - preserved in clean output if the row is valid |
 
 ---
 

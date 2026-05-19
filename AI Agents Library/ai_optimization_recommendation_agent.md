@@ -39,7 +39,7 @@ You do NOT perform forecasting.
 
 You ONLY generate recommendations for review and consideration, based on evidence already present in the upstream agent outputs.
 
-Every recommendation is a suggestion to investigate or evaluate — NOT an instruction to act.
+Every recommendation is a suggestion to investigate or evaluate - NOT an instruction to act.
 Use careful phrasing: "Review", "Consider", "Evaluate", "Investigate", "Check whether".
 Never use imperative or automatic phrasing such as "Switch", "Disable", "Move immediately", or "You must".
 
@@ -62,7 +62,7 @@ If no valid input is provided, return status = "failed" and ready_for_next_agent
 
 ---
 
-### STEP 1 — VALIDATE INPUTS
+### STEP 1 - VALIDATE INPUTS
 
 Before generating recommendations, validate each input block.
 
@@ -113,7 +113,7 @@ If anomaly_detection is missing or invalid, do not generate anomaly-based recomm
 
 ---
 
-### STEP 2 — IDENTIFY AVAILABLE EVIDENCE SOURCES
+### STEP 2 - IDENTIFY AVAILABLE EVIDENCE SOURCES
 
 After validation, determine which sources are available and valid (status = "success"). Log a warning for each source that is missing or has a non-success status.
 
@@ -121,7 +121,7 @@ Proceed to generate recommendations only from valid sources. If confidence is lo
 
 ---
 
-### STEP 3 — EXTRACT EVIDENCE
+### STEP 3 - EXTRACT EVIDENCE
 
 Extract relevant signals from each valid source:
 
@@ -149,7 +149,7 @@ Extract relevant signals from each valid source:
 
 ---
 
-### STEP 4 — MATCH EVIDENCE TO RECOMMENDATION RULES
+### STEP 4 - MATCH EVIDENCE TO RECOMMENDATION RULES
 
 Apply the following rules to generate recommendations. Only generate a recommendation if sufficient supporting evidence exists.
 
@@ -181,7 +181,7 @@ If insufficient evidence exists for a recommendation type, skip it and add a war
 
 ---
 
-### STEP 5 — ASSIGN PRIORITY
+### STEP 5 - ASSIGN PRIORITY
 
 Assign one priority level to each recommendation:
 
@@ -210,7 +210,7 @@ If there is insufficient information to assign a precise priority, default to me
 
 ---
 
-### STEP 6 — ASSIGN CONFIDENCE
+### STEP 6 - ASSIGN CONFIDENCE
 
 Assign one confidence level to each recommendation:
 
@@ -229,7 +229,7 @@ Assign one confidence level to each recommendation:
 
 ---
 
-### STEP 7 — BUILD RECOMMENDATIONS
+### STEP 7 - BUILD RECOMMENDATIONS
 
 For each identified recommendation, build an object with the following fields:
 
@@ -248,7 +248,7 @@ For each identified recommendation, build an object with the following fields:
 
 ---
 
-### STEP 8 — BUILD OUTPUT JSON
+### STEP 8 - BUILD OUTPUT JSON
 
 Construct the final JSON output with all recommendations, summary counts, warnings, and pipeline handoff signal.
 
@@ -282,7 +282,7 @@ Populate next_step_reason with a brief explanation of the outcome.
 |---|---|
 | **Input** | JSON object from Cost Analyst Agent, Usage Analyst Agent, Efficiency Metric Agent, and Anomaly Detection Agent |
 | **Output** | JSON object containing recommendations array, summary counts, warnings, and pipeline handoff signal |
-| **Side Effects** | None — read-only processing, no file writes, no external calls |
+| **Side Effects** | None - read-only processing, no file writes, no external calls |
 | **Minimum Valid Input** | At least one upstream JSON with status = "success" |
 | **Failure Condition** | No valid upstream input received |
 | **Pipeline Signal** | ready_for_next_agent = true when status = "success" |
@@ -431,8 +431,8 @@ The agent accepts a single JSON object with up to four keys. All are optional, b
 | target_entity_type | string | team \| provider \| model_or_tool \| usage_type \| user \| segment \| budget \| workflow |
 | target_entity_name | string | Name or identifier of the affected entity |
 | problem_summary | string | Short, evidence-based description of the observed issue |
-| recommendation | string | Review suggestion — must use careful, non-mandatory phrasing |
-| expected_impact | string | Qualitative impact description — no exact savings guarantees |
+| recommendation | string | Review suggestion - must use careful, non-mandatory phrasing |
+| expected_impact | string | Qualitative impact description - no exact savings guarantees |
 | confidence | string | high \| medium \| low |
 | supporting_evidence | array | Evidence items from upstream agents |
 | source_agents | array | Names of upstream agents that provided evidence |
@@ -598,7 +598,7 @@ OUTPUT: Optimization Recommendation JSON
 | Partial inputs received (some missing or invalid) | status = "success" with warnings, recommendations based on available evidence |
 | Output JSON is valid and complete | status = "success" |
 
-> **Note:** `recommendations = []` with `status = "success"` is a correct and expected outcome. The absence of recommendations means no evidence thresholds were met — it is not an error.
+> **Note:** `recommendations = []` with `status = "success"` is a correct and expected outcome. The absence of recommendations means no evidence thresholds were met - it is not an error.
 
 ---
 
@@ -654,10 +654,10 @@ The agent is designed to handle partial inputs gracefully. If only one or two up
 ### Output consumption
 
 The downstream agent or dashboard receives:
-- `recommendations` — array of actionable review suggestions with priority, confidence, and evidence
-- `recommendation_summary` — aggregated counts for filtering and display
-- `warnings` — quality and completeness signals
-- `ready_for_next_agent` — boolean pipeline handoff signal
+- `recommendations` - array of actionable review suggestions with priority, confidence, and evidence
+- `recommendation_summary` - aggregated counts for filtering and display
+- `warnings` - quality and completeness signals
+- `ready_for_next_agent` - boolean pipeline handoff signal
 
 ### Customization guidance
 
@@ -694,27 +694,27 @@ tests/
 
 The implementation should include clearly separated functions for each logical step:
 
-1. `receive_inputs(payload)` — Accept and parse the combined JSON input
-2. `validate_cost_analysis(cost_analysis)` — Validate structure and status of cost_analysis
-3. `validate_usage_analysis(usage_analysis)` — Validate structure and status of usage_analysis
-4. `validate_efficiency_metrics(efficiency_metrics)` — Validate structure and status of efficiency_metrics
-5. `validate_anomaly_detection(anomaly_detection)` — Validate structure and status of anomaly_detection
-6. `identify_available_sources(validated_inputs)` — Determine which sources are available for evidence extraction
-7. `extract_cost_evidence(cost_analysis)` — Extract cost signals from cost_analysis
-8. `extract_usage_evidence(usage_analysis)` — Extract usage signals from usage_analysis
-9. `extract_efficiency_evidence(efficiency_metrics)` — Extract efficiency signals from efficiency_metrics
-10. `extract_anomaly_evidence(anomaly_detection)` — Extract anomaly signals from anomaly_detection
-11. `match_evidence_to_rules(evidence_map)` — Apply recommendation rules and return matched recommendation candidates
-12. `generate_recommendation_id(index)` — Generate sequential IDs in format REC-001
-13. `determine_recommendation_type(match)` — Map a matched rule to a recommendation_type string
-14. `determine_category(recommendation_type)` — Map recommendation_type to category
-15. `assign_priority(match, evidence_map)` — Apply priority rules and return critical | high | medium | low
-16. `assign_confidence(match, available_sources)` — Apply confidence rules and return high | medium | low
-17. `build_supporting_evidence(match)` — Construct the supporting_evidence array from matched signals
-18. `build_recommendation(index, match, evidence_map, available_sources)` — Assemble a single recommendation object
-19. `build_recommendation_summary(recommendations)` — Compute count fields for the summary object
-20. `collect_warnings(validation_results, skipped_matches)` — Assemble the warnings array
-21. `build_output(recommendations, summary, warnings, status, reason)` — Construct the final JSON output
+1. `receive_inputs(payload)` - Accept and parse the combined JSON input
+2. `validate_cost_analysis(cost_analysis)` - Validate structure and status of cost_analysis
+3. `validate_usage_analysis(usage_analysis)` - Validate structure and status of usage_analysis
+4. `validate_efficiency_metrics(efficiency_metrics)` - Validate structure and status of efficiency_metrics
+5. `validate_anomaly_detection(anomaly_detection)` - Validate structure and status of anomaly_detection
+6. `identify_available_sources(validated_inputs)` - Determine which sources are available for evidence extraction
+7. `extract_cost_evidence(cost_analysis)` - Extract cost signals from cost_analysis
+8. `extract_usage_evidence(usage_analysis)` - Extract usage signals from usage_analysis
+9. `extract_efficiency_evidence(efficiency_metrics)` - Extract efficiency signals from efficiency_metrics
+10. `extract_anomaly_evidence(anomaly_detection)` - Extract anomaly signals from anomaly_detection
+11. `match_evidence_to_rules(evidence_map)` - Apply recommendation rules and return matched recommendation candidates
+12. `generate_recommendation_id(index)` - Generate sequential IDs in format REC-001
+13. `determine_recommendation_type(match)` - Map a matched rule to a recommendation_type string
+14. `determine_category(recommendation_type)` - Map recommendation_type to category
+15. `assign_priority(match, evidence_map)` - Apply priority rules and return critical | high | medium | low
+16. `assign_confidence(match, available_sources)` - Apply confidence rules and return high | medium | low
+17. `build_supporting_evidence(match)` - Construct the supporting_evidence array from matched signals
+18. `build_recommendation(index, match, evidence_map, available_sources)` - Assemble a single recommendation object
+19. `build_recommendation_summary(recommendations)` - Compute count fields for the summary object
+20. `collect_warnings(validation_results, skipped_matches)` - Assemble the warnings array
+21. `build_output(recommendations, summary, warnings, status, reason)` - Construct the final JSON output
 
 ### Suggested Test Cases (pytest)
 

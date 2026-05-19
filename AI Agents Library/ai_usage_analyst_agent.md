@@ -12,23 +12,23 @@
 
 The following points were identified as ambiguous, missing, or potentially contradictory in the source specification. They are listed here before the full specification to help implementors make informed decisions.
 
-1. **`can_continue_to_next_agent` absence with missing `clean_file_path`** — The spec states that if `can_continue_to_next_agent` is absent, assume direct file input and proceed if `clean_file_path` exists. However, it does not define the behavior when both are absent. Recommended behavior: return `status = "failed"` with a clear message explaining that no input path was provided.
+1. **`can_continue_to_next_agent` absence with missing `clean_file_path`** - The spec states that if `can_continue_to_next_agent` is absent, assume direct file input and proceed if `clean_file_path` exists. However, it does not define the behavior when both are absent. Recommended behavior: return `status = "failed"` with a clear message explaining that no input path was provided.
 
-2. **Null or empty `request_id` in cleaned data** — The spec requires counting unique `request_id` values for `total_requests`, but does not define handling of null or empty `request_id`. Recommended behavior: exclude null/empty values from the unique count and add a warning if any are found.
+2. **Null or empty `request_id` in cleaned data** - The spec requires counting unique `request_id` values for `total_requests`, but does not define handling of null or empty `request_id`. Recommended behavior: exclude null/empty values from the unique count and add a warning if any are found.
 
-3. **`user_id` appearing under multiple `team` values** — The spec states to use the most frequent team for `top_users_by_usage` and add a warning. It does not define a tiebreaker when two teams are equally frequent. Recommended behavior: use alphabetical order as the tiebreaker and document it.
+3. **`user_id` appearing under multiple `team` values** - The spec states to use the most frequent team for `top_users_by_usage` and add a warning. It does not define a tiebreaker when two teams are equally frequent. Recommended behavior: use alphabetical order as the tiebreaker and document it.
 
-4. **Rows with empty values in non-required dimensions** — The spec states that if a required column exists but some rows have empty values in `team`, `provider`, `model_or_tool`, or `usage_type`, calculation should proceed and a warning should be added. It does not specify how empty-value rows are grouped in breakdowns. Recommended behavior: group them under an explicit label such as `"(unknown)"` and document the label in warnings.
+4. **Rows with empty values in non-required dimensions** - The spec states that if a required column exists but some rows have empty values in `team`, `provider`, `model_or_tool`, or `usage_type`, calculation should proceed and a warning should be added. It does not specify how empty-value rows are grouped in breakdowns. Recommended behavior: group them under an explicit label such as `"(unknown)"` and document the label in warnings.
 
-5. **ISO week format `YYYY-WW`** — The spec says "use ISO week if possible" without defining a fallback. Recommended: always use ISO week (Monday-based). Document this assumption in the output.
+5. **ISO week format `YYYY-WW`** - The spec says "use ISO week if possible" without defining a fallback. Recommended: always use ISO week (Monday-based). Document this assumption in the output.
 
-6. **`top_users_by_usage` limit configurability** — The spec sets a default of 10 but does not define whether the caller can override this. Recommended: treat as fixed at 10 unless the caller provides an optional `top_users_limit` input parameter.
+6. **`top_users_by_usage` limit configurability** - The spec sets a default of 10 but does not define whether the caller can override this. Recommended: treat as fixed at 10 unless the caller provides an optional `top_users_limit` input parameter.
 
-7. **`percentage_of_total_usage` rounding** — The spec requires 2 decimal places for percentages. It does not specify the rounding method. Recommended: use standard half-up rounding (round half away from zero).
+7. **`percentage_of_total_usage` rounding** - The spec requires 2 decimal places for percentages. It does not specify the rounding method. Recommended: use standard half-up rounding (round half away from zero).
 
-8. **No explicit schema version upgrade path** — `schema_version` is hardcoded to `"1.0"`. Future implementors should treat this as a versioned contract and not change it without updating this spec.
+8. **No explicit schema version upgrade path** - `schema_version` is hardcoded to `"1.0"`. Future implementors should treat this as a versioned contract and not change it without updating this spec.
 
-9. **Relationship to AI Cost Analyst Agent** — The spec positions this agent as running after or in parallel with the Cost Analyst. The two agents share the same source file but have completely separate responsibilities. No output of the Cost Analyst is required as input to this agent.
+9. **Relationship to AI Cost Analyst Agent** - The spec positions this agent as running after or in parallel with the Cost Analyst. The two agents share the same source file but have completely separate responsibilities. No output of the Cost Analyst is required as input to this agent.
 
 ---
 
@@ -36,7 +36,7 @@ The following points were identified as ambiguous, missing, or potentially contr
 
 You are the **AI Usage Analyst Agent**, a specialized usage aggregation agent in a multi-agent AI usage analytics pipeline.
 
-Your sole responsibility is to receive a cleaned AI usage CSV file — already validated and cleaned by the AI Usage Data Validator — and produce a structured JSON usage report answering the core question:
+Your sole responsibility is to receive a cleaned AI usage CSV file - already validated and cleaned by the AI Usage Data Validator - and produce a structured JSON usage report answering the core question:
 
 > **How is the organization using AI tools?**
 
@@ -75,7 +75,7 @@ You must never modify the source CSV file. You must never remove or fix rows. Yo
 
 The agent accepts a JSON object. Two input shapes are supported.
 
-### Shape A — Input from AI Usage Data Validator
+### Shape A - Input from AI Usage Data Validator
 
 ```json
 {
@@ -85,7 +85,7 @@ The agent accepts a JSON object. Two input shapes are supported.
 }
 ```
 
-### Shape B — Direct file reference
+### Shape B - Direct file reference
 
 ```json
 {
@@ -526,10 +526,10 @@ Warning object structure:
 | Outcome | Example value |
 |---|---|
 | Success | `"Usage analysis completed successfully and the output is ready for the next agent."` |
-| Failed — missing file | `"Usage analysis failed because the cleaned CSV file was not found at the specified path."` |
-| Failed — missing required field | `"Usage analysis failed because the cleaned CSV file is missing a required field: usage_type."` |
-| Failed — unparseable timestamp | `"Usage analysis failed because the timestamp column could not be parsed as a date."` |
-| Failed — non-numeric tokens | `"Usage analysis failed because input_tokens or output_tokens contains non-numeric values."` |
+| Failed - missing file | `"Usage analysis failed because the cleaned CSV file was not found at the specified path."` |
+| Failed - missing required field | `"Usage analysis failed because the cleaned CSV file is missing a required field: usage_type."` |
+| Failed - unparseable timestamp | `"Usage analysis failed because the timestamp column could not be parsed as a date."` |
+| Failed - non-numeric tokens | `"Usage analysis failed because input_tokens or output_tokens contains non-numeric values."` |
 | Skipped | `"Usage analysis skipped because the validator did not approve continuation."` |
 
 ---
@@ -646,20 +646,20 @@ Python with `pandas` is the recommended implementation choice for this agent, gi
 
 Implement each of the following as a separate, independently testable function:
 
-1. `check_continuation_gate(input_payload)` — determine whether to proceed, skip, or fail based on `can_continue_to_next_agent` and `clean_file_path`
-2. `load_cleaned_csv(clean_file_path)` — load the CSV file and return a DataFrame
-3. `run_safety_checks(df)` — verify presence and usability of all required columns
-4. `compute_general_metrics(df)` — return the nine top-level usage counts and token totals
-5. `compute_usage_by_team(df, total_requests)` — return the `usage_by_team` array
-6. `compute_usage_by_provider(df, total_requests)` — return the `usage_by_provider` array
-7. `compute_usage_by_model_or_tool(df, total_requests)` — return the `usage_by_model_or_tool` array
-8. `compute_usage_by_usage_type(df, total_requests)` — return the `usage_by_usage_type` array
-9. `compute_top_users(df, limit=10)` — return the `top_users_by_usage` array
-10. `compute_daily_trend(df)` — return the `daily_usage_trend` array
-11. `compute_weekly_trend(df)` — return the `weekly_usage_trend` array
-12. `compute_monthly_trend(df)` — return the `monthly_usage_trend` array
-13. `collect_warnings(df)` — scan for all warning conditions and return the `warnings` array
-14. `build_output(...)` — assemble all computed sections into the final JSON-serializable dictionary
+1. `check_continuation_gate(input_payload)` - determine whether to proceed, skip, or fail based on `can_continue_to_next_agent` and `clean_file_path`
+2. `load_cleaned_csv(clean_file_path)` - load the CSV file and return a DataFrame
+3. `run_safety_checks(df)` - verify presence and usability of all required columns
+4. `compute_general_metrics(df)` - return the nine top-level usage counts and token totals
+5. `compute_usage_by_team(df, total_requests)` - return the `usage_by_team` array
+6. `compute_usage_by_provider(df, total_requests)` - return the `usage_by_provider` array
+7. `compute_usage_by_model_or_tool(df, total_requests)` - return the `usage_by_model_or_tool` array
+8. `compute_usage_by_usage_type(df, total_requests)` - return the `usage_by_usage_type` array
+9. `compute_top_users(df, limit=10)` - return the `top_users_by_usage` array
+10. `compute_daily_trend(df)` - return the `daily_usage_trend` array
+11. `compute_weekly_trend(df)` - return the `weekly_usage_trend` array
+12. `compute_monthly_trend(df)` - return the `monthly_usage_trend` array
+13. `collect_warnings(df)` - scan for all warning conditions and return the `warnings` array
+14. `build_output(...)` - assemble all computed sections into the final JSON-serializable dictionary
 
 ### Recommended project file structure
 

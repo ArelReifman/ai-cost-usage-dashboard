@@ -37,7 +37,7 @@ You do NOT write overly long reports.
 You ONLY read the existing upstream agent outputs and produce a short, business-ready executive summary from them.
 
 Every claim in the summary must trace back to evidence present in the provided inputs.
-If evidence is insufficient for a section, leave that section empty or minimal and add a warning — do not fabricate content.
+If evidence is insufficient for a section, leave that section empty or minimal and add a warning - do not fabricate content.
 
 ---
 
@@ -80,22 +80,22 @@ When running on partial inputs, produce a summary covering only the available da
 
 Before producing any output, validate the available inputs as follows.
 
-For validation_report — if present, check: status, data_health_score, warnings, ready_for_next_agent.
+For validation_report - if present, check: status, data_health_score, warnings, ready_for_next_agent.
 If absent or invalid, skip data quality summary and add a warning.
 
-For cost_analysis — if present, check: status, total_cost_usd, cost_by_team, cost_by_provider, cost_by_model_or_tool, daily_cost_trend, budget_usage_by_team, warnings.
+For cost_analysis - if present, check: status, total_cost_usd, cost_by_team, cost_by_provider, cost_by_model_or_tool, daily_cost_trend, budget_usage_by_team, warnings.
 If absent or invalid, skip cost insights and add a warning.
 
-For usage_analysis — if present, check: status, total_requests, total_users, total_tokens, usage_by_team, usage_by_provider, usage_by_model_or_tool, usage_by_usage_type, warnings.
+For usage_analysis - if present, check: status, total_requests, total_users, total_tokens, usage_by_team, usage_by_provider, usage_by_model_or_tool, usage_by_usage_type, warnings.
 If absent or invalid, skip usage insights and add a warning.
 
-For efficiency_metrics — if present, check: status, overall_efficiency_metrics, efficiency_by_team, efficiency_by_provider, efficiency_by_model_or_tool, most_efficient_segments, least_efficient_segments, warnings.
+For efficiency_metrics - if present, check: status, overall_efficiency_metrics, efficiency_by_team, efficiency_by_provider, efficiency_by_model_or_tool, most_efficient_segments, least_efficient_segments, warnings.
 If absent or invalid, skip efficiency insights and add a warning.
 
-For anomaly_detection — if present, check: status, anomalies, anomaly_summary, warnings.
+For anomaly_detection - if present, check: status, anomalies, anomaly_summary, warnings.
 If absent or invalid, skip anomaly insights and add a warning.
 
-For optimization_recommendations — if present, check: status, recommendations, recommendation_summary, warnings.
+For optimization_recommendations - if present, check: status, recommendations, recommendation_summary, warnings.
 If absent or invalid, skip recommendation insights and add a warning.
 
 ---
@@ -635,11 +635,11 @@ The exact field names of these inputs must match the schema defined in the **Inp
 
 The following points document ambiguities, decisions, or edge cases identified during the transformation of the original specification.
 
-**1. Partial input handling — minimum viable summary.**
+**1. Partial input handling - minimum viable summary.**
 The original specification states the agent may run with partial inputs as long as at least one valid output exists. However, it does not define a minimum threshold for what constitutes "enough information for a basic summary." This specification interprets the minimum as: at least one upstream field with `status = "success"` that yields at least one non-empty `key_finding` and one `presentation_talking_point`. If this threshold is not met despite a technically valid input, the agent should return `status = "failed"`.
 
 **2. Recommendation rephrasing vs. invention.**
-The original specification permits the agent to rephrase existing recommendations clearly, but forbids inventing new ones. This is preserved as-is. If the boundary between "rephrasing" and "inventing" is ever unclear in practice, the rule of thumb is: the core action, scope, and priority must all come from the `optimization_recommendations` input — only the language may be simplified for executive audiences.
+The original specification permits the agent to rephrase existing recommendations clearly, but forbids inventing new ones. This is preserved as-is. If the boundary between "rephrasing" and "inventing" is ever unclear in practice, the rule of thumb is: the core action, scope, and priority must all come from the `optimization_recommendations` input - only the language may be simplified for executive audiences.
 
 **3. `status = "skipped"` trigger.**
 The original specification mentions `can_continue_to_next_agent = false` as a possible future trigger for `skipped`. This field is not defined in any current upstream output schema. For now, `skipped` is only triggered by an explicit external instruction. Future implementations may add this field if needed.
@@ -676,25 +676,25 @@ tests/
 
 The implementation should define clear, single-purpose functions for each step:
 
-1. `receive_inputs(payload)` — Accept and parse the input JSON object.
-2. `validate_inputs(payload)` — Check presence and status of each upstream field; collect initial warnings.
-3. `check_run_conditions(validation_results)` — Determine whether enough valid data exists to proceed.
-4. `extract_validation_insights(validation_report)` — Pull data quality summary from the validator output.
-5. `extract_cost_insights(cost_analysis)` — Pull cost totals, drivers, and budget notes.
-6. `extract_usage_insights(usage_analysis)` — Pull request, user, and token counts and main drivers.
-7. `extract_efficiency_insights(efficiency_metrics)` — Pull efficiency metrics and segment rankings.
-8. `extract_anomaly_insights(anomaly_detection)` — Pull anomaly counts and main anomalies.
-9. `extract_recommendation_insights(optimization_recommendations)` — Pull top recommendations by priority.
-10. `build_executive_summary(insights)` — Compose a short plain-language executive summary.
-11. `build_key_findings(insights)` — Produce a ranked array of evidence-backed key findings.
-12. `build_cost_summary(cost_insights)` — Produce the cost_summary block.
-13. `build_usage_summary(usage_insights)` — Produce the usage_summary block.
-14. `build_efficiency_summary(efficiency_insights)` — Produce the efficiency_summary block.
-15. `build_anomaly_summary(anomaly_insights)` — Produce the anomaly_summary block.
-16. `build_recommendation_summary(recommendation_insights)` — Produce the recommendation_summary block.
-17. `collect_risks_and_warnings(all_insights, validation_warnings)` — Aggregate warnings and risks from all sources.
-18. `build_talking_points(insights)` — Produce business-oriented presentation talking points.
-19. `build_output_json(all_sections, status, flags)` — Assemble and return the final JSON object.
+1. `receive_inputs(payload)` - Accept and parse the input JSON object.
+2. `validate_inputs(payload)` - Check presence and status of each upstream field; collect initial warnings.
+3. `check_run_conditions(validation_results)` - Determine whether enough valid data exists to proceed.
+4. `extract_validation_insights(validation_report)` - Pull data quality summary from the validator output.
+5. `extract_cost_insights(cost_analysis)` - Pull cost totals, drivers, and budget notes.
+6. `extract_usage_insights(usage_analysis)` - Pull request, user, and token counts and main drivers.
+7. `extract_efficiency_insights(efficiency_metrics)` - Pull efficiency metrics and segment rankings.
+8. `extract_anomaly_insights(anomaly_detection)` - Pull anomaly counts and main anomalies.
+9. `extract_recommendation_insights(optimization_recommendations)` - Pull top recommendations by priority.
+10. `build_executive_summary(insights)` - Compose a short plain-language executive summary.
+11. `build_key_findings(insights)` - Produce a ranked array of evidence-backed key findings.
+12. `build_cost_summary(cost_insights)` - Produce the cost_summary block.
+13. `build_usage_summary(usage_insights)` - Produce the usage_summary block.
+14. `build_efficiency_summary(efficiency_insights)` - Produce the efficiency_summary block.
+15. `build_anomaly_summary(anomaly_insights)` - Produce the anomaly_summary block.
+16. `build_recommendation_summary(recommendation_insights)` - Produce the recommendation_summary block.
+17. `collect_risks_and_warnings(all_insights, validation_warnings)` - Aggregate warnings and risks from all sources.
+18. `build_talking_points(insights)` - Produce business-oriented presentation talking points.
+19. `build_output_json(all_sections, status, flags)` - Assemble and return the final JSON object.
 
 ### Suggested Usage Example (Future Implementation)
 

@@ -11,7 +11,7 @@ python3 -m streamlit run app.py
 
 Open [http://localhost:8501](http://localhost:8501) in your browser.
 
-## Live AI Advisor — Gemini
+## Live AI Advisor - Gemini
 
 Set your Gemini API key to enable live AI-powered cost optimization recommendations:
 
@@ -20,7 +20,7 @@ export GEMINI_API_KEY="your_key_here"
 python3 -m streamlit run app.py
 ```
 
-When `GEMINI_API_KEY` is set, the AI Advisor uses Gemini 2.5 Flash (with automatic fallback to Gemini 2.0 Flash) to analyze the filtered dataset and return three structured recommendation cards — each with severity, finding, business impact, estimated opportunity, and recommended action.
+When `GEMINI_API_KEY` is set, the AI Advisor uses Gemini 2.5 Flash (with automatic fallback to Gemini 2.0 Flash) to analyze the filtered dataset and return three structured recommendation cards - each with severity, finding, business impact, estimated opportunity, and recommended action.
 
 If no API key is set, or if the Gemini API is temporarily unavailable, the dashboard shows deterministic fallback recommendations derived from the current dataset.
 

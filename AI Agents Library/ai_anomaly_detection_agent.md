@@ -53,7 +53,7 @@ If no valid input is provided, return status = "failed" and ready_for_next_agent
 
 ---
 
-### STEP 1 — VALIDATE INPUTS
+### STEP 1 - VALIDATE INPUTS
 
 Before detecting anomalies, validate each input block.
 
@@ -82,7 +82,7 @@ If all inputs are missing or invalid → status = "failed", ready_for_next_agent
 
 ---
 
-### STEP 2 — DETECT ANOMALIES
+### STEP 2 - DETECT ANOMALIES
 
 Run only the anomaly checks for which you have valid inputs.
 
@@ -129,7 +129,7 @@ If there are fewer than 2 comparable data points to calculate an average or medi
 
 ---
 
-### STEP 3 — ASSIGN SEVERITY
+### STEP 3 - ASSIGN SEVERITY
 
 Assign one severity level to each detected anomaly:
 
@@ -144,7 +144,7 @@ If there is insufficient data to determine severity precisely, default to medium
 
 ---
 
-### STEP 4 — BUILD OUTPUT
+### STEP 4 - BUILD OUTPUT
 
 Construct the anomalies array. Each anomaly must follow this structure exactly:
 
@@ -159,7 +159,7 @@ Construct the anomalies array. Each anomaly must follow this structure exactly:
   "actual_value": <number>,
   "expected_value": <number>,
   "difference_percent": <number or null>,
-  "reason": "<descriptive explanation only — no recommendations>",
+  "reason": "<descriptive explanation only - no recommendations>",
   "source_agent": "AI Cost Analyst Agent | AI Usage Analyst Agent | AI Efficiency Metric Agent"
 }
 
@@ -178,7 +178,7 @@ An empty anomalies array is still a successful result.
 
 ---
 
-### STEP 5 — COMPILE WARNINGS
+### STEP 5 - COMPILE WARNINGS
 
 Add a warning for each of the following situations:
 
@@ -208,7 +208,7 @@ Warnings do NOT trigger data cleaning, value correction, recommendations, foreca
 
 ---
 
-### STEP 6 — RETURN OUTPUT
+### STEP 6 - RETURN OUTPUT
 
 Return only the following JSON object. No explanation, no prose, no additional fields.
 
@@ -251,10 +251,10 @@ READY FOR NEXT AGENT:
 | **Name** | AI Anomaly Detection Agent |
 | **Purpose** | Detect and report unusual patterns in AI cost, usage, and efficiency |
 | **Core Question** | Where are the unusual AI cost, usage, or efficiency patterns? |
-| **Pipeline Stage** | 5 — runs after Cost Analyst, Usage Analyst, Efficiency Metric |
+| **Pipeline Stage** | 5 - runs after Cost Analyst, Usage Analyst, Efficiency Metric |
 | **Target Users** | Orchestrator agents, pipeline runners, FinOps workflows |
 | **Output Type** | Structured JSON anomaly report |
-| **Scope** | Detection and reporting only — no recommendations, no corrections |
+| **Scope** | Detection and reporting only - no recommendations, no corrections |
 
 ---
 
@@ -496,7 +496,7 @@ The agent returns `"status": "success"` when ALL of the following are true:
 - The `anomaly_summary` counts match the actual anomalies array
 - `ready_for_next_agent = true`
 
-An empty anomalies array (`anomalies = []`) is a valid, successful result. It means no anomalies were detected — not that the agent failed.
+An empty anomalies array (`anomalies = []`) is a valid, successful result. It means no anomalies were detected - not that the agent failed.
 
 ---
 
@@ -534,10 +534,10 @@ On skip:
 1. **Copy this file** into your project's agent library or documentation folder.
 2. **Paste the Final Agent Prompt** (the block under "Final Agent Prompt") into a new Claude system prompt or agent configuration.
 3. **Wire up the inputs**: ensure your pipeline passes the output of the Cost Analyst, Usage Analyst, and Efficiency Metric agents into this agent's input contract.
-4. **All three inputs are optional** — the agent can run with any subset of valid inputs. Missing inputs generate warnings but do not block execution.
-5. **This agent is stateless** — it does not require memory of previous runs. Each invocation is independent.
-6. **This agent does not modify any upstream outputs** — it is safe to run without affecting other agents.
-7. **The output is ready for downstream agents** — pass the full JSON output to whatever agent or system consumes anomaly data.
+4. **All three inputs are optional** - the agent can run with any subset of valid inputs. Missing inputs generate warnings but do not block execution.
+5. **This agent is stateless** - it does not require memory of previous runs. Each invocation is independent.
+6. **This agent does not modify any upstream outputs** - it is safe to run without affecting other agents.
+7. **The output is ready for downstream agents** - pass the full JSON output to whatever agent or system consumes anomaly data.
 
 ### Customization Points
 
@@ -587,18 +587,18 @@ tests/
 
 The implementation should contain clearly separated functions for each responsibility:
 
-1. **`receive_inputs(payload)`** — Accept and parse the incoming JSON object with `cost_analysis`, `usage_analysis`, and `efficiency_metrics`.
-2. **`validate_inputs(payload)`** — Check field presence and `status` for each input block. Return a map of which categories are available.
-3. **`determine_available_categories(validation_result)`** — Decide which of cost / usage / efficiency can be evaluated based on validation.
-4. **`compute_statistics(data_array, field)`** — Calculate average, median, and peer percentages for a given metric array.
-5. **`detect_cost_anomalies(cost_analysis)`** — Apply all cost detection rules and return raw anomaly candidates.
-6. **`detect_usage_anomalies(usage_analysis)`** — Apply all usage detection rules and return raw anomaly candidates.
-7. **`detect_efficiency_anomalies(efficiency_metrics)`** — Apply all efficiency detection rules and return raw anomaly candidates.
-8. **`assign_severity(anomaly_candidate)`** — Apply severity rules and return the appropriate level.
-9. **`assign_anomaly_ids(anomalies_list)`** — Generate sequential IDs in `ANOM-001` format.
-10. **`build_anomaly_summary(anomalies_list)`** — Count anomalies by severity and category.
-11. **`collect_warnings(validation_result, computation_issues)`** — Aggregate all warnings from validation and computation steps.
-12. **`build_output(anomalies, summary, warnings, status, ready, reason)`** — Assemble the final JSON output object.
+1. **`receive_inputs(payload)`** - Accept and parse the incoming JSON object with `cost_analysis`, `usage_analysis`, and `efficiency_metrics`.
+2. **`validate_inputs(payload)`** - Check field presence and `status` for each input block. Return a map of which categories are available.
+3. **`determine_available_categories(validation_result)`** - Decide which of cost / usage / efficiency can be evaluated based on validation.
+4. **`compute_statistics(data_array, field)`** - Calculate average, median, and peer percentages for a given metric array.
+5. **`detect_cost_anomalies(cost_analysis)`** - Apply all cost detection rules and return raw anomaly candidates.
+6. **`detect_usage_anomalies(usage_analysis)`** - Apply all usage detection rules and return raw anomaly candidates.
+7. **`detect_efficiency_anomalies(efficiency_metrics)`** - Apply all efficiency detection rules and return raw anomaly candidates.
+8. **`assign_severity(anomaly_candidate)`** - Apply severity rules and return the appropriate level.
+9. **`assign_anomaly_ids(anomalies_list)`** - Generate sequential IDs in `ANOM-001` format.
+10. **`build_anomaly_summary(anomalies_list)`** - Count anomalies by severity and category.
+11. **`collect_warnings(validation_result, computation_issues)`** - Aggregate all warnings from validation and computation steps.
+12. **`build_output(anomalies, summary, warnings, status, ready, reason)`** - Assemble the final JSON output object.
 
 ### Suggested Entry Point
 
@@ -659,7 +659,7 @@ The spec lists `efficiency_drop` as a detectable anomaly type but does not provi
 ### 4. `high_cost_low_usage` Cross-Metric Anomaly
 This anomaly type requires combining data from both `cost_analysis` and `efficiency_metrics`. The spec does not define the exact peer-comparison logic or what "high" and "low" mean numerically in this context. The implementer should define a clear rule (e.g. cost_per_1k_tokens > average * 2 AND total_tokens < average * 0.5).
 
-### 5. `top_users_by_cost` — Top 5% Rule
+### 5. `top_users_by_cost` - Top 5% Rule
 The spec defines `high_cost_user` as a user in the "top 5% by total_cost_usd." If the dataset contains fewer than 20 users, the top 5% may resolve to zero users. The agent should handle this gracefully (e.g. flag the top 1 user if fewer than 20 are present, or add a warning and skip).
 
 ### 6. `difference_percent` Sign Convention

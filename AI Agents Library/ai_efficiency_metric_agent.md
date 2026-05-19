@@ -8,10 +8,10 @@
 |---|---|
 | **Agent Name** | AI Efficiency Metric Agent |
 | **Version** | 1.0 |
-| **Pipeline Position** | Step 4 — runs after AI Cost Analyst Agent and AI Usage Analyst Agent |
+| **Pipeline Position** | Step 4 - runs after AI Cost Analyst Agent and AI Usage Analyst Agent |
 | **Single Responsibility** | Calculate efficiency metrics by joining Cost Analysis JSON and Usage Analysis JSON |
 | **Target Users** | FinOps analysts, engineering leaders, AI platform teams, pipeline orchestrators |
-| **Reusable** | Yes — not locked to any specific product or infrastructure |
+| **Reusable** | Yes - not locked to any specific product or infrastructure |
 
 ---
 
@@ -211,9 +211,9 @@ Set next_step_reason to a concise English sentence explaining the handoff decisi
 | **Receives from** | AI Cost Analyst Agent (JSON), AI Usage Analyst Agent (JSON) |
 | **Produces** | Efficiency metrics JSON |
 | **Passes to** | Next agent in pipeline (e.g., anomaly detection, recommendation, or reporting agent) |
-| **Stateless** | Yes — no memory of prior runs required |
-| **Side effects** | None — read-only computation |
-| **External dependencies** | None — operates entirely on structured JSON inputs |
+| **Stateless** | Yes - no memory of prior runs required |
+| **Side effects** | None - read-only computation |
+| **External dependencies** | None - operates entirely on structured JSON inputs |
 | **Orchestration** | Designed to be called programmatically from a pipeline runner |
 
 ---
@@ -411,10 +411,10 @@ Any metric field may be `null` instead of a number when division by zero occurs.
 ## Agent Workflow
 
 ```
-Step 1 — Receive input
+Step 1 - Receive input
   └── Accept a JSON object containing cost_analysis and usage_analysis
 
-Step 2 — Pre-flight status check
+Step 2 - Pre-flight status check
   ├── Verify cost_analysis and usage_analysis are present
   ├── Verify cost_analysis.status = "success"
   ├── Verify usage_analysis.status = "success"
@@ -422,12 +422,12 @@ Step 2 — Pre-flight status check
   ├── Verify usage_analysis.ready_for_next_agent = true
   └── If any check fails → return failed output immediately
 
-Step 3 — Critical field validation
+Step 3 - Critical field validation
   ├── Validate required fields in cost_analysis
   ├── Validate required fields in usage_analysis
   └── If any critical field is missing → return failed output immediately
 
-Step 4 — Join cost and usage data
+Step 4 - Join cost and usage data
   ├── Join cost_by_team ↔ usage_by_team on: team
   ├── Join cost_by_provider ↔ usage_by_provider on: provider
   ├── Join cost_by_model_or_tool ↔ usage_by_model_or_tool on: model_or_tool + provider
@@ -436,7 +436,7 @@ Step 4 — Join cost and usage data
   ├── Join top_users_by_cost ↔ top_users_by_usage on: user_id (optional)
   └── For each unmatched segment → add warning, skip segment
 
-Step 5 — Calculate overall efficiency metrics
+Step 5 - Calculate overall efficiency metrics
   ├── total_cost_usd (from cost_analysis)
   ├── total_requests, total_users, total_tokens (from usage_analysis)
   ├── cost_per_request, cost_per_user, cost_per_1k_tokens
@@ -444,29 +444,29 @@ Step 5 — Calculate overall efficiency metrics
   ├── efficiency_score = tokens_per_dollar
   └── Apply division-by-zero rules; add warnings where applicable
 
-Step 6 — Calculate efficiency_by_team
+Step 6 - Calculate efficiency_by_team
   └── For each joined team: compute all 8 metrics + efficiency_score
 
-Step 7 — Calculate efficiency_by_provider
+Step 7 - Calculate efficiency_by_provider
   └── For each joined provider: compute all 8 metrics + efficiency_score
 
-Step 8 — Calculate efficiency_by_model_or_tool
+Step 8 - Calculate efficiency_by_model_or_tool
   └── For each joined model/tool: compute all 8 metrics + efficiency_score
 
-Step 9 — Calculate efficiency_by_usage_type
+Step 9 - Calculate efficiency_by_usage_type
   └── For each joined usage type: compute all 8 metrics + efficiency_score
 
-Step 10 — Build segment rankings
+Step 10 - Build segment rankings
   ├── most_efficient_segments: top 5 per dimension by efficiency_score DESC
   ├── least_efficient_segments: bottom 5 per dimension by efficiency_score ASC
   └── Exclude segments where efficiency_score = null
 
-Step 11 — Determine status and handoff flag
+Step 11 - Determine status and handoff flag
   ├── status = "success" if calculations completed and at least one array is non-empty
   ├── ready_for_next_agent = true only when status = "success"
   └── Set next_step_reason
 
-Step 12 — Return output JSON
+Step 12 - Return output JSON
 ```
 
 ---
@@ -575,8 +575,8 @@ The agent sets `status = "failed"` and `ready_for_next_agent = false` when ANY o
 |---|---|
 | Different schema versions | Update the join key mapping and re-validate critical fields |
 | Additional dimensions (e.g., by region) | Add a new join step and a new `efficiency_by_region` array; do not modify existing steps |
-| Token-free tools (e.g., image APIs) | `total_tokens = 0` is handled — agent returns 0 or null with a warning |
-| No user-level data available | `efficiency_by_user` is optional — agent returns empty array and warning |
+| Token-free tools (e.g., image APIs) | `total_tokens = 0` is handled - agent returns 0 or null with a warning |
+| No user-level data available | `efficiency_by_user` is optional - agent returns empty array and warning |
 | Changing the efficiency_score definition | Update only the `efficiency_score` formula field; all other metrics remain unchanged |
 
 ### What this agent does NOT do
@@ -596,22 +596,22 @@ This agent is intentionally scoped. For the following capabilities, connect addi
 
 The following points were identified during conversion of the original specification. They are recorded for clarity and do not block use of this agent.
 
-### SN-01 — efficiency_score definition is tokens_per_dollar
+### SN-01 - efficiency_score definition is tokens_per_dollar
 The specification explicitly defines `efficiency_score = tokens_per_dollar`. This means that for AI tools that do not process tokens (e.g., image generation APIs or web search tools), `total_tokens` may be zero, causing `efficiency_score = null` or `0`. Future versions may need to define an alternative efficiency score for non-token-based tools. This is not handled in v1.0.
 
-### SN-02 — efficiency_by_user is not in the output schema
+### SN-02 - efficiency_by_user is not in the output schema
 The specification describes optional efficiency calculations per user (`top_users_by_cost` ↔ `top_users_by_usage`) but does not include `efficiency_by_user` in the required output JSON schema. This agent does not output `efficiency_by_user` unless a future schema version adds it. If both user arrays are present and the implementor chooses to include it, they should add a `warnings` entry and maintain backward compatibility.
 
-### SN-03 — unique_users field sourced from usage_by_team only
+### SN-03 - unique_users field sourced from usage_by_team only
 For `efficiency_by_team`, the field `unique_users` is expected. This value comes from `usage_analysis.usage_by_team` (not from `cost_analysis`). If `unique_users` is not present in the team usage record, return `null` for `cost_per_user` at team level and add a warning.
 
-### SN-04 — cost_by_usage_type vs usage_by_usage_type key naming
+### SN-04 - cost_by_usage_type vs usage_by_usage_type key naming
 The specification assumes the key in both arrays is `usage_type`. If the upstream agents use a different field name (e.g., `type` or `category`), the join will fail with a mismatch warning. Implementors should verify field naming across all three agents before running the pipeline.
 
-### SN-05 — No aggregation logic specified for join
+### SN-05 - No aggregation logic specified for join
 The specification does not clarify what to do if the same key appears multiple times in a single array (e.g., duplicate team entries). Implementors should aggregate duplicates by summing numeric fields before joining. This behavior is assumed but not explicitly stated.
 
-### SN-06 — Budget data not used
+### SN-06 - Budget data not used
 `cost_analysis.budget_usage_by_team` is present in the input but is not referenced by any efficiency metric defined in this specification. It is passed through in the input but not used or forwarded in the output.
 
 ---
@@ -636,23 +636,23 @@ tests/
 
 The implementation should expose one public entry point and organize logic into the following discrete functions:
 
-1. `calculate_ai_efficiency_metrics(input_json)` — main entry point; accepts the combined input JSON and returns the output JSON
-2. `validate_run_conditions(input_json)` — checks status flags and ready_for_next_agent on both upstream outputs
-3. `validate_critical_fields(cost_analysis, usage_analysis)` — checks for presence of all required fields
-4. `join_by_team(cost_by_team, usage_by_team)` — joins team arrays on the `team` key
-5. `join_by_provider(cost_by_provider, usage_by_provider)` — joins provider arrays on the `provider` key
-6. `join_by_model_or_tool(cost_by_model_or_tool, usage_by_model_or_tool)` — joins on `model_or_tool` + `provider`; falls back to `model_or_tool` only with warning
-7. `join_by_usage_type(cost_by_usage_type, usage_by_usage_type)` — joins on `usage_type`
-8. `compute_efficiency_metrics(cost_usd, requests, users, tokens)` — computes all 6 efficiency metrics; handles division by zero; returns metrics dict + warnings
-9. `calculate_overall_efficiency(cost_analysis, usage_analysis)` — computes overall-level metrics
-10. `calculate_efficiency_by_team(joined_teams)` — computes per-team metrics
-11. `calculate_efficiency_by_provider(joined_providers)` — computes per-provider metrics
-12. `calculate_efficiency_by_model_or_tool(joined_models)` — computes per-model/tool metrics
-13. `calculate_efficiency_by_usage_type(joined_usage_types)` — computes per-usage-type metrics
-14. `build_most_efficient_segments(team_metrics, provider_metrics, model_metrics, type_metrics)` — top 5 per dimension by efficiency_score descending
-15. `build_least_efficient_segments(team_metrics, provider_metrics, model_metrics, type_metrics)` — bottom 5 per dimension by efficiency_score ascending
-16. `collect_warnings(...)` — aggregates warning objects from all join and computation steps
-17. `build_output_json(...)` — assembles the final output object; validates it is JSON-serializable
+1. `calculate_ai_efficiency_metrics(input_json)` - main entry point; accepts the combined input JSON and returns the output JSON
+2. `validate_run_conditions(input_json)` - checks status flags and ready_for_next_agent on both upstream outputs
+3. `validate_critical_fields(cost_analysis, usage_analysis)` - checks for presence of all required fields
+4. `join_by_team(cost_by_team, usage_by_team)` - joins team arrays on the `team` key
+5. `join_by_provider(cost_by_provider, usage_by_provider)` - joins provider arrays on the `provider` key
+6. `join_by_model_or_tool(cost_by_model_or_tool, usage_by_model_or_tool)` - joins on `model_or_tool` + `provider`; falls back to `model_or_tool` only with warning
+7. `join_by_usage_type(cost_by_usage_type, usage_by_usage_type)` - joins on `usage_type`
+8. `compute_efficiency_metrics(cost_usd, requests, users, tokens)` - computes all 6 efficiency metrics; handles division by zero; returns metrics dict + warnings
+9. `calculate_overall_efficiency(cost_analysis, usage_analysis)` - computes overall-level metrics
+10. `calculate_efficiency_by_team(joined_teams)` - computes per-team metrics
+11. `calculate_efficiency_by_provider(joined_providers)` - computes per-provider metrics
+12. `calculate_efficiency_by_model_or_tool(joined_models)` - computes per-model/tool metrics
+13. `calculate_efficiency_by_usage_type(joined_usage_types)` - computes per-usage-type metrics
+14. `build_most_efficient_segments(team_metrics, provider_metrics, model_metrics, type_metrics)` - top 5 per dimension by efficiency_score descending
+15. `build_least_efficient_segments(team_metrics, provider_metrics, model_metrics, type_metrics)` - bottom 5 per dimension by efficiency_score ascending
+16. `collect_warnings(...)` - aggregates warning objects from all join and computation steps
+17. `build_output_json(...)` - assembles the final output object; validates it is JSON-serializable
 
 ### Recommended test scenarios (for pytest)
 

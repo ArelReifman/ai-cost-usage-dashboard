@@ -22,7 +22,7 @@ The following ambiguities were identified in the source spec and resolved before
 ## 1. Final Agent Prompt
 
 ```
-You are the AI Usage Data Validator — a data validation and cleaning agent.
+You are the AI Usage Data Validator - a data validation and cleaning agent.
 
 Your only responsibility is to validate, clean, and score AI usage and cost data files before they are passed to downstream agents.
 
@@ -171,7 +171,7 @@ Set can_continue_to_next_agent = false otherwise.
 ## Validation Status
 
 - "passed": no critical errors, no rows removed, no warnings of any kind
-- "passed_with_warnings": warnings, high warnings, or rows removed — but can_continue_to_next_agent = true
+- "passed_with_warnings": warnings, high warnings, or rows removed - but can_continue_to_next_agent = true
 - "failed": can_continue_to_next_agent = false
 
 ---
@@ -198,9 +198,9 @@ savings recommendations, executive summaries, vendor comparisons, or usage forec
 | **Downstream** | Next pipeline agent (e.g., Cost Analysis Agent, Anomaly Detection Agent) |
 | **Handoff Condition** | `can_continue_to_next_agent = true` AND clean file written to `data/cleaned/` |
 | **Handoff Payload** | JSON report (see schema) + path to clean CSV file |
-| **Invocation Type** | Synchronous — returns result before downstream agent starts |
+| **Invocation Type** | Synchronous - returns result before downstream agent starts |
 | **Idempotent?** | Deterministic validation logic: yes. Fully idempotent output path: no, because the clean file name includes a timestamp. The validation results should be consistent for the same input, but `clean_file_path` may differ between runs. |
-| **State** | Stateless — no memory between invocations |
+| **State** | Stateless - no memory between invocations |
 
 ### What This Agent Does
 - Reads one data file (CSV or JSON)
@@ -318,7 +318,7 @@ Return `validation_status = "failed"` if such a file is provided.
 | `can_continue_to_next_agent` | boolean | Whether the next agent should process this file |
 | `next_step_reason` | string | Brief explanation of the transition decision |
 
-### `invalid_rows_details` — Field Definitions
+### `invalid_rows_details` - Field Definitions
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -330,7 +330,7 @@ Return `validation_status = "failed"` if such a file is provided.
 | `severity` | enum | Always `"critical"` in `invalid_rows_details` |
 | `action` | enum | Always `"removed_from_clean_file"` in this version |
 
-### `warnings` — Field Definitions
+### `warnings` - Field Definitions
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -367,7 +367,7 @@ Return `validation_status = "failed"` if such a file is provided.
 ```
 "Cleaned dataset passed all validation checks and is ready for the next agent."
 
-"Validation failed: required columns are missing — team, cost_usd."
+"Validation failed: required columns are missing - team, cost_usd."
 
 "Validation failed: no valid rows remained after cleaning."
 
@@ -391,7 +391,7 @@ START
   │
   ├─ Unsupported ──────────────────────────────────────────────────────┐
   ▼                                                                     │
-[3] Read file — check readability, emptiness, zero records             │
+[3] Read file - check readability, emptiness, zero records             │
   │                                                                     │
   ├─ Unreadable / empty / no records ──────────────────────────────────┤
   ▼                                                                     │
@@ -461,14 +461,14 @@ END
 
 | # | Forbidden Action | Reason |
 |---|-----------------|--------|
-| 1 | Cost analysis or cost breakdown | Out of scope — belongs to Cost Analysis Agent |
-| 2 | Anomaly detection | Out of scope — belongs to Anomaly Detection Agent |
-| 3 | ROI analysis | Out of scope — belongs to ROI Agent |
-| 4 | Optimization recommendations | Out of scope — belongs to Optimization Agent |
-| 5 | Savings recommendations | Out of scope — belongs to Optimization Agent |
-| 6 | Executive summaries | Out of scope — belongs to Reporting Agent |
-| 7 | Vendor/provider comparisons | Out of scope — belongs to Analysis Agent |
-| 8 | Usage or cost forecasting | Out of scope — belongs to Forecasting Agent |
+| 1 | Cost analysis or cost breakdown | Out of scope - belongs to Cost Analysis Agent |
+| 2 | Anomaly detection | Out of scope - belongs to Anomaly Detection Agent |
+| 3 | ROI analysis | Out of scope - belongs to ROI Agent |
+| 4 | Optimization recommendations | Out of scope - belongs to Optimization Agent |
+| 5 | Savings recommendations | Out of scope - belongs to Optimization Agent |
+| 6 | Executive summaries | Out of scope - belongs to Reporting Agent |
+| 7 | Vendor/provider comparisons | Out of scope - belongs to Analysis Agent |
+| 8 | Usage or cost forecasting | Out of scope - belongs to Forecasting Agent |
 | 9 | Reading Excel files | Not supported in v1.0 |
 | 10 | Modifying the original source file | Read-only access to source; only write to `data/cleaned/` |
 | 11 | Storing state between invocations | Agent is stateless |
@@ -521,7 +521,7 @@ The agent fails (returns `validation_status = "failed"`) in the following cases:
 The agent may still create a clean file, but `validation_status` must be `"failed"` whenever `can_continue_to_next_agent = false`.
 
 This occurs when:
-- `data_health_score ≤ 85` — data quality too low
+- `data_health_score ≤ 85` - data quality too low
 - The clean file still contains rows with critical errors (should not happen by design, but flagged defensively)
 
 ---
@@ -619,7 +619,7 @@ Suggested functions, each with a single responsibility:
 | `build_json_report(...)` | Assemble and return final JSON report dict |
 | `run(file_path)` | Orchestrates all of the above; entry point |
 
-### `sample_ai_usage_data.csv` — Required Test Rows
+### `sample_ai_usage_data.csv` - Required Test Rows
 
 The sample file must contain at least one row of each type:
 
@@ -634,7 +634,7 @@ The sample file must contain at least one row of each type:
 | Inconsistent `monthly_budget` for same `team` | Triggers `inconsistent_monthly_budget` high warning |
 | Missing value in required field | Triggers `missing_required_value` critical error |
 
-### `README.md` — Required Sections
+### `README.md` - Required Sections
 
 1. What the agent does (one paragraph)
 2. Supported input formats
@@ -657,5 +657,5 @@ Integration tests should cover:
 
 ---
 
-*Agent Package v1.0 — AI Agents Library*
+*Agent Package v1.0 - AI Agents Library*
 *Created: 2026-05-18*
