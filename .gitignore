@@ -5,3 +5,4 @@ __pycache__/
 .DS_Store
 .streamlit/secrets.toml
 *_backup_*
+DEMO_SCRIPT.local.md
