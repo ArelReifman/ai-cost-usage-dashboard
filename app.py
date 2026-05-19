@@ -621,9 +621,9 @@ st.markdown(
 
 st.markdown(
     '<p class="kpi-helper">'
-    "Based on data from the selected period. "
-    "<strong>Model Efficiency</strong> = % of requests where model tier matches task complexity. "
-    "<strong>Optimization Potential</strong> = estimated recoverable spend if identified waste patterns are addressed."
+    "Metrics are calculated from the selected period. "
+    "<strong>Model Efficiency</strong> measures how often model tier matches task complexity. "
+    "<strong>Optimization Potential</strong> estimates recoverable spend from detected waste patterns."
     "</p>",
     unsafe_allow_html=True,
 )
@@ -1259,8 +1259,7 @@ st.markdown(
     "<div class='dash-footer'>"
     "AI Cost &amp; Usage Intelligence &nbsp;·&nbsp; "
     "Streamlit + Plotly &nbsp;·&nbsp; "
-    "Schema: AGENT.md v1.0 &nbsp;·&nbsp; "
-    "Data: data/ai_usage_mock.csv"
+    "Demo dataset"
     "</div>",
     unsafe_allow_html=True,
 )
