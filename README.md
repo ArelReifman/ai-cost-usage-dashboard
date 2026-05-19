@@ -26,6 +26,8 @@ If no API key is set, or if the Gemini API is temporarily unavailable, the dashb
 
 > **Never commit API keys. Use environment variables only.**
 
+> **Note:** `anthropic` is included in `requirements.txt` as optional secondary support — if `ANTHROPIC_API_KEY` is set, the advisor falls back to Claude. Gemini is the primary live AI Advisor used in the demo.
+
 ## Features
 
 | Section | Details |
@@ -79,5 +81,5 @@ The app auto-generates data on first run if `data/ai_usage_mock.csv` is missing.
 ├── data/
 │   └── ai_usage_mock.csv   # 1,000-row mock dataset (9 providers, 44 models)
 └── AI Agents Library/
-    └── AGENT.md            # Data validator agent spec
+    └── *.md                # Agent specification files used for planning and analysis
 ```
